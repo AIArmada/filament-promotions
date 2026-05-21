@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AIArmada\FilamentPromotions\Resources;
 
+use AIArmada\CommerceSupport\Support\FilamentPermission;
 use AIArmada\FilamentPromotions\Models\Promotion;
 use AIArmada\FilamentPromotions\Resources\PromotionResource\Pages\CreatePromotion;
 use AIArmada\FilamentPromotions\Resources\PromotionResource\Pages\EditPromotion;
@@ -12,20 +13,19 @@ use AIArmada\FilamentPromotions\Resources\PromotionResource\Pages\ViewPromotion;
 use AIArmada\FilamentPromotions\Resources\PromotionResource\Schemas\PromotionForm;
 use AIArmada\FilamentPromotions\Resources\PromotionResource\Schemas\PromotionInfolist;
 use AIArmada\FilamentPromotions\Resources\PromotionResource\Tables\PromotionsTable;
-use AIArmada\FilamentPromotions\Support\OwnerScopedQueries;
+use AIArmada\Promotions\Support\PromotionsOwnerScope;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 final class PromotionResource extends Resource
 {
     protected static ?string $model = Promotion::class;
-
-    protected static ?string $tenantOwnershipRelationshipName = 'owner';
 
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedSparkles;
 
@@ -40,6 +40,36 @@ final class PromotionResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return PromotionForm::configure($schema);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return FilamentPermission::hasAbility('promotion.viewAny');
+    }
+
+    public static function canView(Model $record): bool
+    {
+        return FilamentPermission::hasAbility('promotion.view');
+    }
+
+    public static function canCreate(): bool
+    {
+        return FilamentPermission::hasAbility('promotion.create');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return FilamentPermission::hasAbility('promotion.update');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return FilamentPermission::hasAbility('promotion.delete');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::canViewAny();
     }
 
     public static function infolist(Schema $schema): Schema
@@ -91,7 +121,7 @@ final class PromotionResource extends Resource
         $query = parent::getEloquentQuery();
 
         /** @var Builder<Promotion> $scoped */
-        $scoped = OwnerScopedQueries::scopePromotion($query);
+        $scoped = PromotionsOwnerScope::applyToOwnedQuery($query);
 
         return $scoped;
     }

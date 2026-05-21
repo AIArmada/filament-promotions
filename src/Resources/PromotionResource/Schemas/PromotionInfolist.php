@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AIArmada\FilamentPromotions\Resources\PromotionResource\Schemas;
 
+use AIArmada\CommerceSupport\Support\MoneyFormatter;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -15,6 +16,8 @@ final class PromotionInfolist
 {
     public static function configure(Schema $schema): Schema
     {
+        $currency = (string) config('promotions.defaults.currency', 'USD');
+
         return $schema
             ->components([
                 Section::make('Basic Information')
@@ -45,23 +48,22 @@ final class PromotionInfolist
 
                                 TextEntry::make('discount_value')
                                     ->label('Discount Value')
-                                    ->formatStateUsing(function ($record): string {
+                                    ->formatStateUsing(function ($record) use ($currency): string {
                                         if ($record->type->value === 'percentage') {
                                             return $record->discount_value . '%';
                                         }
 
-                                        return '$' . number_format($record->discount_value / 100, 2);
+                                        return MoneyFormatter::formatMinor($record->discount_value, $currency);
                                     }),
 
-                                TextEntry::make('min_order_value')
+                                TextEntry::make('min_purchase_amount')
                                     ->label('Min Order')
-                                    ->money('USD', divideBy: 100)
+                                    ->formatStateUsing(fn ($state): ?string => $state === null ? null : MoneyFormatter::formatMinor((int) $state, $currency))
                                     ->placeholder('None'),
 
-                                TextEntry::make('max_discount')
-                                    ->label('Max Discount')
-                                    ->money('USD', divideBy: 100)
-                                    ->placeholder('Unlimited'),
+                                TextEntry::make('min_quantity')
+                                    ->label('Min Quantity')
+                                    ->placeholder('None'),
                             ]),
                     ]),
 
@@ -77,7 +79,7 @@ final class PromotionInfolist
                                     ->label('Usage Limit')
                                     ->placeholder('Unlimited'),
 
-                                TextEntry::make('usage_per_customer')
+                                TextEntry::make('per_customer_limit')
                                     ->label('Per Customer')
                                     ->placeholder('Unlimited'),
 
