@@ -95,6 +95,12 @@ $type->color();  // "success"
 
 ## Widget Not Displaying
 
+### Check Feature Toggle
+
+`PromotionStatsWidget` is always registered by the plugin — there is no
+`features.widgets` toggle. If the widget is missing, check that the plugin is
+registered and that the panel dashboard renders widgets.
+
 ### Register Widget
 
 Ensure the widget is registered in your panel:
@@ -165,7 +171,7 @@ For large datasets, consider:
 3. Enable pagination
 
 ```php
-// Disable badge in custom resource
+// Disable the badge in your own resource (PromotionResource is final)
 public static function getNavigationBadge(): ?string
 {
     return null;
