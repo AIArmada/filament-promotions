@@ -58,42 +58,38 @@ When this package is installed alongside `aiarmada/filament-pricing`, it is the 
 
 ```
 filament-promotions/
-├── src/
-│   ├── Actions/                       # Filament actions
-│   │   ├── IssuePromotionVouchersAction.php
-│   │   └── IssuePromotionVouchersFromListAction.php
-│   ├── Resources/
-│   │   ├── PromotionResource.php
-│   │   └── PromotionResource/
-│   │       ├── Pages/
-│   │       │   ├── CreatePromotion.php
-│   │       │   ├── EditPromotion.php
-│   │       │   ├── ListPromotions.php
-│   │       │   └── ViewPromotion.php
-│   │       ├── RelationManagers/
-│   │       │   └── IssuedVouchersRelationManager.php
-│   │       ├── Schemas/
-│   │       │   ├── PromotionForm.php
-│   │       │   └── PromotionInfolist.php
-│   │       └── Tables/
-│   │           └── PromotionsTable.php
-│   ├── Support/
-│   │   └── CachedPromotionInsights.php # Cached owner-scoped insights
-│   ├── Widgets/
-│   │   ├── PromotionStatsWidget.php    # Dashboard stats
-│   │   └── TopPromotionsUsageChart.php # List-page header widget
-│   ├── FilamentPromotionsPlugin.php    # Plugin registration
-│   └── FilamentPromotionsServiceProvider.php
+├── Actions/
+│   ├── IssuePromotionVouchersAction.php
+│   └── IssuePromotionVouchersFromListAction.php
+├── Resources/
+│   └── PromotionResource/
+│       ├── Pages/
+│       │   ├── CreatePromotion.php
+│       │   ├── EditPromotion.php
+│       │   └── ListPromotions.php
+│       ├── RelationManagers/
+│       │   └── VouchersRelationManager.php
+│       ├── Schemas/
+│       │   └── PromotionForm.php
+│       └── Tables/
+│           └── PromotionsTable.php
+├── Support/
+│   └── CachedPromotionInsights.php  # Cached performance-insights helper
+├── Widgets/
+│   ├── PromotionStatsWidget.php     # Dashboard stats
+│   └── TopPromotionsUsageChart.php  # Usage chart
+├── FilamentPromotionsPlugin.php     # Plugin registration
+└── FilamentPromotionsServiceProvider.php
 ```
 
-The `PromotionType` enum and the `Promotion` model live in the core
-`aiarmada/promotions` package, not in this adapter.
+This package ships no `Enums/` or `Models/` directories; it reuses the
+`PromotionType` enum and `Promotion` model from `aiarmada/promotions`.
 
 ## Requirements
 
 - PHP 8.4+
 - Laravel 13+
-- Filament 5.8+
+- Filament 5.0+
 - aiarmada/promotions package
 
 ## Plugin Registration
